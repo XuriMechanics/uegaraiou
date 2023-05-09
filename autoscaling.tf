@@ -17,9 +17,10 @@ resource "aws_launch_configuration" "my_launch_configuration" {
               sudo yum install amazon-efs-utils -y
               sudo systemctl start efs && sudo systemctl enable efs
               sudo mkdir /efs
-              sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${aws_efs_mount_target.efs_mount_target_a.ip}:/ /efs
+              cd /
+              sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs
               sudo echo 'AllowUsers ec2-user'
-              sudo echo '${aws_efs_file_system.efs.id}:/ /efs efs defaults,_netdev 0 0' | sudo tee -a /etc/fstab
+              sudo echo ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 | sudo tee -a /etc/fstab
 
               EOF
 }
